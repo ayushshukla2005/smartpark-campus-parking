@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en" class="w-full min-h-screen overflow-x-hidden">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Campus Parking | SmartPark Hub</title>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    },
+                    colors: {
+                        brand: {
+                            50: '#fef2f2',
+                            100: '#fee2e2',
+                            500: '#ef4444',
+                            600: '#dc2626',
+                            700: '#b91c1c',
+                            900: '#7f1d1d'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+
+        /* 21st.dev Fluid Responsive Typography System */
+        .type-eyebrow {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(0.6875rem, 1.1vw, 0.75rem);
+            letter-spacing: 0.2em;
+            line-height: 1.4;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .type-display-title {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(1.625rem, 3.5vw, 2.25rem);
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            font-weight: 800;
+            text-wrap: balance;
+        }
+
+        .type-card-title {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(1.0625rem, 2vw, 1.25rem);
+            letter-spacing: -0.02em;
+            line-height: 1.25;
+            font-weight: 700;
+            text-wrap: balance;
+        }
+
+        .type-body-sub {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(0.875rem, 1.4vw, 0.95rem);
+            letter-spacing: -0.005em;
+            line-height: 1.6;
+            text-wrap: pretty;
+        }
+
+        .type-numeric {
+            font-family: 'JetBrains Mono', monospace;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.02em;
+        }
+
+        @keyframes pulse-subtle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.75; transform: scale(1.04); }
+        }
+        .pulse-live {
+            animation: pulse-subtle 2s infinite ease-in-out;
+        }
+        .progress-bar-transition {
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* 21st.dev Liquid Glass Floating Pill Navbar Specification */
+        .liquid-glass-nav {
+            background: rgba(16, 16, 20, 0.72);
+            backdrop-filter: blur(20px) saturate(160%);
+            -webkit-backdrop-filter: blur(20px) saturate(160%);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+        }
+        .liquid-glass-active {
+            background: rgba(255, 255, 255, 0.11);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.35), 
+                        inset 0 -1px 1px rgba(0, 0, 0, 0.4), 
+                        0 0 0 1px rgba(220, 40, 40, 0.45), 
+                        0 4px 16px rgba(220, 40, 40, 0.25);
+            color: #FFFFFF;
+        }
+    </style>
+</head>
+<body class="bg-[#0A0A0A] w-full min-h-screen text-zinc-100 antialiased selection:bg-red-600 selection:text-white relative overflow-x-hidden">
+
+    <!-- 21st.dev "HANZO Radar Sweep" Background Layer -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true" style="background-color: #0A0A0A;">
+        <!-- Conic Orbit Sweep with Scale (68%) and Softness (26%) -->
+        <div class="absolute inset-0 flex items-center justify-center">
+            <div class="w-[140vw] h-[140vw] max-w-[1500px] max-h-[1500px] rounded-full transform-gpu"
+                 style="background: conic-gradient(from 90deg at 50% 50%, #0A0A0A 0%, #DC2828 40%, #811D1D 70%, #262626 100%);
+                        filter: blur(52px);
+                        transform: scale(0.68);
+                        opacity: 0.85;">
+            </div>
+        </div>
+
+        <!-- SVG Turbulence / Wave Accent (wave: 12, distortion: 28, grain: 0) -->
+        <svg class="absolute inset-0 w-full h-full opacity-25 mix-blend-overlay" xmlns="http://www.w3.org/2000/svg">
+            <filter id="hanzo-radar-wave">
+                <feTurbulence type="fractalNoise" baseFrequency="0.012 0.028" numOctaves="3" result="waveTurbulence"/>
+                <feDisplacementMap in="SourceGraphic" in2="waveTurbulence" scale="28" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
+            <rect width="100%" height="100%" filter="url(#hanzo-radar-wave)" fill="#DC2828" opacity="0.45"/>
+        </svg>
+
+        <!-- Radial Vignette & Perimeter Fade (fade: 40%) to keep #0A0A0A dominant at edges -->
+        <div class="absolute inset-0"
+             style="background: radial-gradient(circle at 50% 50%, rgba(10, 10, 10, 0.1) 0%, rgba(10, 10, 10, 0.45) 45%, #0A0A0A 80%);">
+        </div>
+
+        <!-- Subtle Circular Radar Concentric Distance Rings & Crosshair -->
+        <div class="absolute inset-0 flex items-center justify-center opacity-10">
+            <div class="w-[300px] h-[300px] rounded-full border border-red-500"></div>
+            <div class="w-[600px] h-[600px] rounded-full border border-red-500 absolute"></div>
+            <div class="w-[900px] h-[900px] rounded-full border border-red-500/60 absolute"></div>
+            <div class="w-full h-[1px] bg-gradient-to-r from-transparent via-red-500/40 to-transparent absolute"></div>
+            <div class="h-full w-[1px] bg-gradient-to-b from-transparent via-red-500/40 to-transparent absolute"></div>
+        </div>
+    </div>
+
+    <!-- Foreground Application Container (Full-Viewport Shell) -->
+    <div class="relative z-10 min-h-screen w-full flex flex-col justify-between overflow-x-hidden">
+
+        <!-- Toast Notification Container -->
+        <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+        <!-- Full-Width Navigation Header with 21st.dev Liquid Glass Floating Pill Navbar -->
+        <header class="bg-neutral-950/60 border-b border-white/[0.08] sticky top-0 z-40 backdrop-blur-xl shadow-lg shadow-black/40 w-full">
+            <div class="w-full px-4 sm:px-6 lg:px-10 xl:px-12 py-3 lg:py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                
+                <!-- Brand Identity & Live Status -->
+                <div class="flex items-center justify-between w-full sm:w-auto gap-4">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-10 h-10 lg:w-11 lg:h-11 rounded-xl bg-gradient-to-tr from-red-600 via-rose-600 to-red-800 flex items-center justify-center text-white shadow-md shadow-red-950/60 ring-1 ring-white/15 flex-shrink-0">
+                            <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h8a2 2 0 012 2v10m-10 0H6a2 2 0 01-2-2V9a2 2 0 012-2h2m0 0V5a2 2 0 012-2h4a2 2 0 012 2v2m-6 4v6m4-6v6"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2.5">
+                                <h1 class="text-lg lg:text-xl font-bold text-white tracking-tight">SmartPark</h1>
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full type-eyebrow bg-emerald-950/60 text-emerald-400 border border-emerald-500/30 whitespace-nowrap">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 pulse-live"></span>
+                                    Live Feed
+                                </span>
+                            </div>
+                            <p class="text-xs text-zinc-400 tracking-tight">Campus Real-Time Parking System</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 21st.dev Liquid Glass Floating Pill Navigation Bar -->
+                <nav class="liquid-glass-nav inline-flex items-center gap-1 p-1 rounded-full shadow-2xl flex-shrink-0" aria-label="Main Navigation">
+                    <!-- Active: Live Parking -->
+                    <a href="/" aria-current="page" class="liquid-glass-active rounded-full px-5 py-2.5 flex items-center gap-2 text-xs sm:text-sm font-semibold tracking-tight transition-all duration-200 select-none min-h-[44px]">
+                        <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="9"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10 16V8h3.25a2.25 2.25 0 010 4.5H10"/>
+                        </svg>
+                        <span>Live Parking</span>
+                    </a>
+
+                    <!-- Inactive: AI Predictor -->
+                    <a href="/predict.html" class="rounded-full px-5 py-2.5 flex items-center gap-2 text-xs sm:text-sm font-medium text-zinc-400 hover:text-zinc-100 hover:bg-white/[0.05] active:scale-[0.98] transition-all duration-200 select-none min-h-[44px]">
+                        <svg class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z"/>
+                        </svg>
+                        <span>AI Predictor</span>
+                    </a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content Area (Full-Width Responsive Fluid Container) -->
+        <main class="w-full px-4 sm:px-6 lg:px-10 xl:px-12 py-6 lg:py-8 space-y-6 lg:space-y-8 flex-1">
+
+            <!-- 1. ACTIVE PARKING SESSION (GPS LOCATOR) - Full-Width Layout -->
+            <section id="active-session" class="hidden w-full">
+                <div class="bg-neutral-950/80 backdrop-blur-xl border border-emerald-500/30 rounded-2xl p-5 sm:p-6 lg:p-7 shadow-2xl shadow-emerald-950/30 ring-1 ring-emerald-500/20 relative overflow-hidden w-full">
+                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                        
+                        <!-- Left: Vehicle Identity -->
+                        <div class="flex items-center gap-3.5 flex-shrink-0">
+                            <div class="w-12 h-12 lg:w-14 lg:h-14 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-lg shadow-emerald-900/50 ring-1 ring-emerald-400/30 flex-shrink-0">
+                                <svg class="w-6 h-6 lg:w-7 lg:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full type-eyebrow bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 whitespace-nowrap">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 pulse-live"></span>
+                                    Vehicle Parked
+                                </span>
+                                <h3 id="parked-location" class="type-card-title text-white mt-1">Zone Name</h3>
+                            </div>
+                        </div>
+
+                        <!-- Center: Session Metadata Grid -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 flex-1 lg:max-w-3xl">
+                            <div class="bg-white/[0.04] backdrop-blur-md p-3.5 rounded-xl border border-white/10 flex items-center gap-3">
+                                <svg class="w-5 h-5 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <div class="truncate">
+                                    <p class="text-xs text-zinc-400 font-medium tracking-tight">Session Started</p>
+                                    <p id="parked-timestamp" class="type-numeric text-xs sm:text-sm font-semibold text-zinc-100 truncate">Just now</p>
+                                </div>
+                            </div>
+                            <div class="bg-white/[0.04] backdrop-blur-md p-3.5 rounded-xl border border-white/10 flex items-center gap-3">
+                                <svg class="w-5 h-5 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                                <div class="truncate">
+                                    <p class="text-xs text-zinc-400 font-medium tracking-tight">Saved GPS Coordinates</p>
+                                    <p id="parked-coords-text" class="type-numeric text-xs sm:text-sm font-semibold text-zinc-100 truncate">Coordinates acquired</p>
+                                </div>
+                            </div>
+                            <div class="bg-white/[0.04] backdrop-blur-md p-3.5 rounded-xl border border-white/10 flex items-center gap-3">
+                                <svg class="w-5 h-5 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <div>
+                                    <p class="type-eyebrow text-emerald-400">Parked Duration</p>
+                                    <p id="parking-duration-timer" class="type-numeric text-sm sm:text-base font-bold text-emerald-300">00:00:00</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Action Controls -->
+                        <div class="flex flex-col sm:flex-row lg:flex-col gap-2.5 flex-shrink-0 lg:w-48">
+                            <a id="maps-link" href="#" target="_blank" rel="noopener noreferrer" class="hidden inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-4 py-2.5 rounded-xl shadow-lg shadow-emerald-950/50 transition-all text-xs whitespace-nowrap min-h-[40px]">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                                </svg>
+                                Directions (Maps)
+                            </a>
+                            
+                            <button id="leave-button" onclick="confirmLeavePrompt()" class="inline-flex items-center justify-center gap-2 bg-white/[0.06] hover:bg-white/[0.12] text-zinc-200 font-semibold px-4 py-2.5 rounded-xl border border-white/15 shadow-sm transition-all text-xs whitespace-nowrap min-h-[40px]">
+                                <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                </svg>
+                                I'm Leaving (Free Spot)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Inline Confirmation Panel for Leaving -->
+                    <div id="leave-confirm-panel" class="hidden mt-4 p-4 bg-neutral-900/90 rounded-xl border border-rose-500/30">
+                        <p class="type-card-title text-sm sm:text-base text-white mb-2">Are you sure you want to release this parking spot?</p>
+                        <p class="type-body-sub text-xs text-zinc-400 mb-3">This will free up the spot in <span id="confirm-zone-name" class="font-bold text-zinc-200"></span> and clear your saved parking location.</p>
+                        <div class="flex gap-2">
+                            <button onclick="executeLeaveSpot()" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-rose-600 hover:bg-rose-500 text-white transition shadow-md shadow-rose-950/40">
+                                Yes, Release Spot
+                            </button>
+                            <button onclick="cancelLeavePrompt()" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-white/10 hover:bg-white/15 text-zinc-300 transition">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. CAMPUS OVERVIEW SUMMARY BAR (Full-Width Responsive Card) -->
+            <section class="bg-neutral-950/75 backdrop-blur-xl border border-white/10 rounded-2xl p-5 sm:p-6 lg:p-8 shadow-2xl shadow-black/50 w-full">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 lg:mb-6">
+                    <div>
+                        <span class="type-eyebrow text-red-400">Campus Overview</span>
+                        <h2 class="type-display-title text-white mt-0.5">Real-Time Occupancy</h2>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span id="overview-badge" class="px-3 py-1 rounded-full type-eyebrow bg-emerald-950/60 text-emerald-400 border border-emerald-500/30 whitespace-nowrap">
+                            Optimal Availability
+                        </span>
+                        <button onclick="refreshData()" title="Refresh Status" class="p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-300 border border-white/10 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 4 Metrics Expanding Across Full Viewport -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 pt-2">
+                    <div class="bg-white/[0.04] backdrop-blur-md border border-white/[0.08] p-4 lg:p-5 rounded-xl flex flex-col justify-between">
+                        <p class="text-xs text-zinc-400 font-medium tracking-tight">Open Spots</p>
+                        <p id="total-open-spots" class="type-numeric text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white mt-1">---</p>
+                    </div>
+                    <div class="bg-white/[0.04] backdrop-blur-md border border-white/[0.08] p-4 lg:p-5 rounded-xl flex flex-col justify-between">
+                        <p class="text-xs text-zinc-400 font-medium tracking-tight">Total Capacity</p>
+                        <p id="total-campus-capacity" class="type-numeric text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white mt-1">1,050</p>
+                    </div>
+                    <div class="bg-white/[0.04] backdrop-blur-md border border-white/[0.08] p-4 lg:p-5 rounded-xl flex flex-col justify-between">
+                        <p class="text-xs text-zinc-400 font-medium tracking-tight">Campus Occupancy</p>
+                        <p id="total-occupancy-pct" class="type-numeric text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white mt-1">--%</p>
+                    </div>
+                    <div class="bg-white/[0.04] backdrop-blur-md border border-white/[0.08] p-4 lg:p-5 rounded-xl flex flex-col justify-between">
+                        <p class="text-xs text-zinc-400 font-medium tracking-tight">Active Zones</p>
+                        <p class="type-numeric text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white mt-1">3 / 3</p>
+                    </div>
+                </div>
+
+                <!-- Full-Width Utilization Bar -->
+                <div class="mt-5 lg:mt-6 pt-4 border-t border-white/10">
+                    <div class="flex justify-between type-body-sub text-xs text-zinc-400 mb-2 font-medium">
+                        <span>Overall Campus Utilization</span>
+                        <span id="overview-progress-label" class="type-numeric">Calculating...</span>
+                    </div>
+                    <div class="w-full bg-white/10 h-3 rounded-full overflow-hidden">
+                        <div id="overview-progress-bar" class="h-full bg-gradient-to-r from-emerald-500 via-amber-500 to-rose-500 progress-bar-transition" style="width: 0%"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Loading State for GPS -->
+            <div id="gps-loading" class="hidden bg-neutral-900/80 border border-red-500/30 p-4 rounded-xl flex items-center justify-center gap-3 text-red-200 shadow-lg shadow-black/40 backdrop-blur-md w-full">
+                <svg class="w-5 h-5 animate-spin text-red-500" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span class="type-body-sub text-sm font-medium">Acquiring high-accuracy GPS coordinates for your vehicle...</span>
+            </div>
+
+            <!-- 3. LIVE ZONES DASHBOARD (Full-Width Responsive 3-Column Grid) -->
+            <section class="space-y-4 w-full">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="type-card-title text-white">Campus Parking Zones</h2>
+                        <p class="type-body-sub text-xs text-zinc-400">Select an available zone below to mark your spot</p>
+                    </div>
+                    <span class="type-eyebrow text-zinc-500 whitespace-nowrap">3 Primary Lots</span>
+                </div>
+
+                <!-- Dynamic Zone Cards Container (Stretching Across Full Viewport) -->
+                <div id="zones-container" class="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-7 w-full">
+                    <!-- Injected via JavaScript -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Full-Width Footer Anchored Cleanly at Bottom -->
+        <footer class="w-full mt-auto border-t border-white/10 px-4 sm:px-6 lg:px-10 xl:px-12 py-5 lg:py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
+            <div class="flex items-center gap-2 type-body-sub">
+                <span>© SmartPark Campus Mobility</span>
+                <span>•</span>
+                <a href="/predict.html" class="text-red-400 hover:text-red-300 font-medium">Plan with AI Predictor &rarr;</a>
+            </div>
+            
+            <button onclick="resetDemoCounts()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white/[0.06] hover:bg-white/[0.12] text-zinc-300 border border-white/10 font-medium transition-colors">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                Reset Demo Counts
+            </button>
+        </footer>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Default initial capacity data
+        const DEFAULT_ZONES = [
+            { id: 'main', name: 'Main Gate', total: 500, available: 142, description: 'Primary entrance with visitor & faculty bays' },
+            { id: 'admission', name: 'Admission Block', total: 150, available: 12, description: 'Near administration offices & auditorium' },
+            { id: 'block34', name: 'Block 34', total: 400, available: 215, description: 'Close to STEM laboratories & student centers' }
+        ];
+
+        // Safe localStorage reading with fallback
+        function loadZones() {
+            try {
+                const stored = localStorage.getItem('parkingZones');
+                if (stored) {
+                    const parsed = JSON.parse(stored);
+                    if (Array.isArray(parsed) && parsed.length === DEFAULT_ZONES.length) {
+                        return parsed;
+                    }
+                }
+            } catch (err) {
+                console.warn("Corrupted parkingZones in localStorage. Resetting to defaults.", err);
+            }
+            localStorage.setItem('parkingZones', JSON.stringify(DEFAULT_ZONES));
+            return JSON.parse(JSON.stringify(DEFAULT_ZONES));
+        }
+
+        let zones = loadZones();
+        let timerInterval = null;
+
+        // Toast Notification System
+        function showToast(title, message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = "pointer-events-auto flex items-start gap-3 p-4 rounded-xl shadow-2xl border backdrop-blur-xl transition-all duration-300 transform translate-y-2 opacity-0";
+            
+            let iconSvg = '';
+            let styleClasses = '';
+
+            if (type === 'success') {
+                styleClasses = 'bg-neutral-900/95 text-white border-emerald-500/40 shadow-emerald-950/50';
+                iconSvg = `<svg class="w-5 h-5 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
+            } else if (type === 'warning') {
+                styleClasses = 'bg-neutral-900/95 text-white border-amber-500/40 shadow-amber-950/50';
+                iconSvg = `<svg class="w-5 h-5 text-amber-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
+            } else if (type === 'error') {
+                styleClasses = 'bg-neutral-900/95 text-white border-rose-500/40 shadow-rose-950/50';
+                iconSvg = `<svg class="w-5 h-5 text-rose-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+            } else {
+                styleClasses = 'bg-neutral-900/95 text-white border-red-500/40 shadow-red-950/50';
+                iconSvg = `<svg class="w-5 h-5 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+            }
+
+            toast.className += ` ${styleClasses}`;
+            toast.innerHTML = `
+                ${iconSvg}
+                <div class="flex-1 text-xs">
+                    <p class="type-card-title text-sm text-white">${title}</p>
+                    <p class="type-body-sub text-xs mt-0.5 text-zinc-300">${message}</p>
+                </div>
+                <button onclick="this.parentElement.remove()" class="text-zinc-400 hover:text-white transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            `;
+
+            container.appendChild(toast);
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            });
+
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.classList.add('opacity-0', 'translate-y-2');
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 4000);
+        }
+
+        // Render Dashboard & Zone Cards
+        function renderZones() {
+            const container = document.getElementById('zones-container');
+            const parkedZoneId = localStorage.getItem('parkedZone');
+            const parkedLat = localStorage.getItem('parkedLat');
+            const parkedLng = localStorage.getItem('parkedLng');
+            const parkedTimestamp = localStorage.getItem('parkedTimestamp');
+
+            // 1. Calculate Campus Aggregate Stats
+            const totalCapacity = zones.reduce((acc, z) => acc + z.total, 0);
+            const totalAvailable = zones.reduce((acc, z) => acc + z.available, 0);
+            const totalOccupied = totalCapacity - totalAvailable;
+            const occupancyPct = Math.round((totalOccupied / totalCapacity) * 100);
+
+            document.getElementById('total-open-spots').innerText = totalAvailable.toLocaleString();
+            document.getElementById('total-campus-capacity').innerText = totalCapacity.toLocaleString();
+            document.getElementById('total-occupancy-pct').innerText = `${occupancyPct}%`;
+            
+            const overviewProgressBar = document.getElementById('overview-progress-bar');
+            overviewProgressBar.style.width = `${occupancyPct}%`;
+            document.getElementById('overview-progress-label').innerText = `${totalOccupied} / ${totalCapacity} spots filled (${occupancyPct}%)`;
+
+            const overviewBadge = document.getElementById('overview-badge');
+            if (occupancyPct >= 85) {
+                overviewBadge.className = "px-3 py-1 rounded-full type-eyebrow bg-rose-950/60 text-rose-400 border border-rose-500/30 whitespace-nowrap";
+                overviewBadge.innerText = "Heavy Congestion";
+            } else if (occupancyPct >= 60) {
+                overviewBadge.className = "px-3 py-1 rounded-full type-eyebrow bg-amber-950/60 text-amber-400 border border-amber-500/30 whitespace-nowrap";
+                overviewBadge.innerText = "Moderate Traffic";
+            } else {
+                overviewBadge.className = "px-3 py-1 rounded-full type-eyebrow bg-emerald-950/60 text-emerald-400 border border-emerald-500/30 whitespace-nowrap";
+                overviewBadge.innerText = "Optimal Availability";
+            }
+
+            // 2. Render Zone Cards
+            container.innerHTML = '';
+            zones.forEach(zone => {
+                const isFull = zone.available <= 0;
+                const isParkedHere = (parkedZoneId === zone.id);
+                const hasActiveSession = Boolean(parkedZoneId);
+                const availabilityPct = Math.round((zone.available / zone.total) * 100);
+                const occupiedPct = 100 - availabilityPct;
+
+                // Status configuration
+                let badgeClass = '';
+                let badgeText = '';
+                let barColor = '';
+
+                if (isFull) {
+                    badgeClass = 'bg-rose-950/60 text-rose-400 border-rose-500/30';
+                    badgeText = 'Full';
+                    barColor = 'bg-rose-500';
+                } else if (availabilityPct < 15) {
+                    badgeClass = 'bg-rose-950/60 text-rose-400 border-rose-500/30';
+                    badgeText = 'Nearly Full';
+                    barColor = 'bg-rose-500';
+                } else if (availabilityPct < 40) {
+                    badgeClass = 'bg-amber-950/60 text-amber-400 border-amber-500/30';
+                    badgeText = 'Filling Fast';
+                    barColor = 'bg-amber-500';
+                } else {
+                    badgeClass = 'bg-emerald-950/60 text-emerald-400 border border-emerald-500/30';
+                    badgeText = 'Available';
+                    barColor = 'bg-emerald-500';
+                }
+
+                const card = document.createElement('div');
+                card.className = `bg-neutral-950/75 backdrop-blur-xl rounded-2xl p-5 lg:p-6 border transition-all duration-200 flex flex-col justify-between shadow-xl shadow-black/40 ${
+                    isParkedHere ? 'ring-2 ring-emerald-500 border-emerald-500/50 bg-emerald-950/20' : 'border-white/10 hover:border-white/20'
+                }`;
+
+                let buttonHtml = '';
+                if (isParkedHere) {
+                    buttonHtml = `
+                        <button disabled class="w-full py-3 px-4 rounded-xl font-semibold text-xs bg-emerald-950/60 text-emerald-300 border border-emerald-500/30 flex items-center justify-center gap-1.5 cursor-default min-h-[44px]">
+                            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            You Are Parked Here
+                        </button>
+                    `;
+                } else if (hasActiveSession) {
+                    buttonHtml = `
+                        <button disabled class="w-full py-3 px-4 rounded-xl font-semibold text-xs bg-white/[0.04] text-zinc-500 border border-white/[0.06] cursor-not-allowed min-h-[44px]">
+                            Parked in Another Zone
+                        </button>
+                    `;
+                } else if (isFull) {
+                    buttonHtml = `
+                        <button disabled class="w-full py-3 px-4 rounded-xl font-semibold text-xs bg-rose-950/40 text-rose-400/60 border border-rose-500/20 cursor-not-allowed min-h-[44px]">
+                            Lot Full (No Spots)
+                        </button>
+                    `;
+                } else {
+                    buttonHtml = `
+                        <button onclick="initiateParking('${zone.id}')" class="w-full py-3 px-4 rounded-xl font-semibold text-xs bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-950/50 hover:shadow-red-900/60 transition-all flex items-center justify-center gap-1.5 min-h-[44px]">
+                            Park Here
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </button>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-2 gap-2">
+                            <h3 class="type-card-title text-white truncate">${zone.name}</h3>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full type-eyebrow border whitespace-nowrap flex-shrink-0 ${badgeClass}">
+                                ${badgeText}
+                            </span>
+                        </div>
+                        <p class="type-body-sub text-xs text-zinc-400 mb-4 line-clamp-2">${zone.description || 'Designated parking bay for students & faculty'}</p>
+
+                        <div class="mb-4">
+                            <div class="flex items-baseline justify-between mb-1.5">
+                                <div>
+                                    <span class="type-numeric text-2xl lg:text-3xl font-extrabold text-white">${zone.available}</span>
+                                    <span class="type-numeric text-xs font-semibold text-zinc-400">/ ${zone.total} spots free</span>
+                                </div>
+                                <span class="type-numeric text-xs font-medium text-zinc-400">${occupiedPct}% filled</span>
+                            </div>
+                            
+                            <!-- Capacity Progress Bar -->
+                            <div class="w-full bg-white/10 h-2.5 rounded-full overflow-hidden">
+                                <div class="h-full ${barColor} progress-bar-transition" style="width: ${occupiedPct}%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-3 border-t border-white/10">
+                        ${buttonHtml}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            // 3. Render Active Session Card
+            const activeSessionDiv = document.getElementById('active-session');
+            const mapsLink = document.getElementById('maps-link');
+
+            if (parkedZoneId) {
+                const activeZone = zones.find(z => z.id === parkedZoneId);
+                if (activeZone) {
+                    document.getElementById('parked-location').innerText = activeZone.name;
+                    document.getElementById('confirm-zone-name').innerText = activeZone.name;
+
+                    if (parkedTimestamp) {
+                        const dateObj = new Date(parseInt(parkedTimestamp, 10));
+                        document.getElementById('parked-timestamp').innerText = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' (' + dateObj.toLocaleDateString() + ')';
+                    } else {
+                        document.getElementById('parked-timestamp').innerText = "Active";
+                    }
+
+                    if (parkedLat && parkedLng) {
+                        document.getElementById('parked-coords-text').innerText = `${parseFloat(parkedLat).toFixed(4)}° N, ${parseFloat(parkedLng).toFixed(4)}° E`;
+                        mapsLink.href = `https://www.google.com/maps/dir/?api=1&destination=${parkedLat},${parkedLng}`;
+                        mapsLink.classList.remove('hidden');
+                        mapsLink.classList.add('inline-flex');
+                    } else {
+                        document.getElementById('parked-coords-text').innerText = "Zone saved (GPS skipped)";
+                        mapsLink.classList.add('hidden');
+                        mapsLink.classList.remove('inline-flex');
+                    }
+
+                    activeSessionDiv.classList.remove('hidden');
+                    startParkingTimer(parkedTimestamp);
+                } else {
+                    // Parked zone ID is corrupt / no longer exists
+                    localStorage.removeItem('parkedZone');
+                    localStorage.removeItem('parkedLat');
+                    localStorage.removeItem('parkedLng');
+                    localStorage.removeItem('parkedTimestamp');
+                    activeSessionDiv.classList.add('hidden');
+                    stopParkingTimer();
+                }
+            } else {
+                activeSessionDiv.classList.add('hidden');
+                stopParkingTimer();
+            }
+        }
+
+        // Live Elapsed Duration Timer
+        function startParkingTimer(startTimestamp) {
+            stopParkingTimer();
+            const timerEl = document.getElementById('parking-duration-timer');
+            if (!startTimestamp) {
+                timerEl.innerText = "00:00:00";
+                return;
+            }
+
+            const start = parseInt(startTimestamp, 10);
+            function update() {
+                const elapsedSeconds = Math.max(0, Math.floor((Date.now() - start) / 1000));
+                const hours = Math.floor(elapsedSeconds / 3600);
+                const minutes = Math.floor((elapsedSeconds % 3600) / 60);
+                const seconds = elapsedSeconds % 60;
+                timerEl.innerText = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }
+            update();
+            timerInterval = setInterval(update, 1000);
+        }
+
+        function stopParkingTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        // Parking Action Flow
+        function initiateParking(zoneId) {
+            const gpsLoading = document.getElementById('gps-loading');
+            gpsLoading.classList.remove('hidden');
+
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        finalizeParking(zoneId, position.coords.latitude, position.coords.longitude);
+                    },
+                    (error) => {
+                        showToast("GPS Notice", "Could not get exact GPS coordinates. Saving zone location.", "warning");
+                        finalizeParking(zoneId, null, null);
+                    },
+                    { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+                );
+            } else {
+                showToast("Notice", "Geolocation is not supported by your browser. Saving zone location.", "warning");
+                finalizeParking(zoneId, null, null);
+            }
+        }
+
+        function finalizeParking(zoneId, lat, lng) {
+            document.getElementById('gps-loading').classList.add('hidden');
+            const zoneIndex = zones.findIndex(z => z.id === zoneId);
+
+            if (zoneIndex !== -1 && zones[zoneIndex].available > 0) {
+                zones[zoneIndex].available -= 1;
+
+                const timestamp = Date.now();
+                localStorage.setItem('parkedZone', zoneId);
+                localStorage.setItem('parkedTimestamp', timestamp.toString());
+
+                if (lat && lng) {
+                    localStorage.setItem('parkedLat', lat);
+                    localStorage.setItem('parkedLng', lng);
+                }
+
+                localStorage.setItem('parkingZones', JSON.stringify(zones));
+                renderZones();
+
+                showToast("Spot Secured", `Successfully parked in ${zones[zoneIndex].name}!`, "success");
+            } else {
+                showToast("Error", "Selected zone is no longer available.", "error");
+            }
+        }
+
+        // Confirmation Modal Flow for Leaving
+        function confirmLeavePrompt() {
+            document.getElementById('leave-confirm-panel').classList.remove('hidden');
+            document.getElementById('leave-button').classList.add('hidden');
+        }
+
+        function cancelLeavePrompt() {
+            document.getElementById('leave-confirm-panel').classList.add('hidden');
+            document.getElementById('leave-button').classList.remove('hidden');
+        }
+
+        function executeLeaveSpot() {
+            cancelLeavePrompt();
+            const zoneId = localStorage.getItem('parkedZone');
+            const zoneIndex = zones.findIndex(z => z.id === zoneId);
+
+            if (zoneIndex !== -1) {
+                zones[zoneIndex].available = Math.min(zones[zoneIndex].total, zones[zoneIndex].available + 1);
+            }
+
+            localStorage.removeItem('parkedZone');
+            localStorage.removeItem('parkedLat');
+            localStorage.removeItem('parkedLng');
+            localStorage.removeItem('parkedTimestamp');
+            localStorage.setItem('parkingZones', JSON.stringify(zones));
+
+            renderZones();
+            showToast("Spot Released", "You have successfully freed up your parking spot. Drive safely!", "success");
+        }
+
+        // Reset Demo Counts
+        function resetDemoCounts() {
+            localStorage.removeItem('parkedZone');
+            localStorage.removeItem('parkedLat');
+            localStorage.removeItem('parkedLng');
+            localStorage.removeItem('parkedTimestamp');
+            localStorage.setItem('parkingZones', JSON.stringify(DEFAULT_ZONES));
+            zones = JSON.parse(JSON.stringify(DEFAULT_ZONES));
+            renderZones();
+            showToast("Demo Reset", "Restored default parking spot counts and cleared active session.", "info");
+        }
+
+        function refreshData() {
+            zones = loadZones();
+            renderZones();
+            showToast("Refreshed", "Live parking counts updated.", "info");
+        }
+
+        // Initialize App
+        renderZones();
+    </script>
+</body>
+</html>
