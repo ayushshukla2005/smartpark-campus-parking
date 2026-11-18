@@ -188,15 +188,24 @@ Open your browser to:
 
 The application is pre-configured with `Procfile`, dynamic `PORT` binding, and pinned `requirements.txt` for one-click deployment.
 
-### Option A: Render (Recommended)
-1. Push your repository to GitHub or GitLab.
-2. Sign in to [Render](https://render.com) and click **New + > Web Service**.
-3. Select your repository.
-4. Set the following build settings:
+### Option A: Render (Recommended — 1-Click Blueprint)
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/ayushshukla2005/smartpark-campus-parking)
+
+#### Method 1: Instant Blueprint Deploy
+Click the button above or visit:
+👉 **[Deploy to Render](https://render.com/deploy?repo=https://github.com/ayushshukla2005/smartpark-campus-parking)**
+
+Render automatically reads `render.yaml` and deploys the web service with free HTTPS.
+
+#### Method 2: Manual Dashboard Deploy
+1. Sign in to [Render](https://render.com) and click **New + > Web Service**.
+2. Select your repository: `ayushshukla2005/smartpark-campus-parking`.
+3. Set the following build settings:
    - **Environment:** `Python 3`
    - **Build Command:** `pip install -r requirements.txt && python train_model.py`
    - **Start Command:** `gunicorn app:app`
-5. Click **Deploy Web Service**. Render assigns an HTTPS URL automatically.
+4. Click **Deploy Web Service**. Render assigns an HTTPS URL automatically (e.g. `https://smartpark-campus-parking.onrender.com`).
 
 ### Option B: Railway
 1. Sign in to [Railway.app](https://railway.app).
